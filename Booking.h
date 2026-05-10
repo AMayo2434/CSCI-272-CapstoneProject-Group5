@@ -3,12 +3,9 @@
 
 #include "functions.h"
 
+
 class Booking {
 
-    private:
-
-
-    protected:
 
 
     public: 

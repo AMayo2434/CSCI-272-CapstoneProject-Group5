@@ -50,14 +50,17 @@ class LandingPage {
                 }
                 else if (guestOption == 2) {
                     //Add the sign in function. Ensure the user details are verified with the CSV file w/ unordered map.
+
                 }
                 else if (guestOption == 3) {
                     //Add the enter booking ID function which references the booking ID in the CSV file. Brings up user information.
+
+
                 }
         
                 else if (guestOption == 4) { 
                     //Exits program. 
-                    std::cout << "Thank you for visiting Express! We hope to see you again soon!" << std::endl;
+                    std::cout << "Thank you for visiting Express GP! We hope to see you again soon!" << std::endl;
                     exit(0);                    
                 }
 // Returns to the main menu if the input is invalid.
