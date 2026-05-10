@@ -4,13 +4,16 @@
 #include "functions.h"
 
 
+
 class Booking {
 
-    public: 
+    protected: 
 
     Booking () {}
 
-    
+     void viewAccount() {
+            // Code to display account information
+        }
 
 
 

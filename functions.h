@@ -126,8 +126,12 @@ inline void updateCSV(std::string filename, std::string id, int column, std::str
 }
 
 
+//Can be used for all edits so inline above^
+
+
 //USing a template to store a single or multiple arguments. 
 //Using the filesystem library to use the exists function to see if there is already existing data.
+//ues func
 template <typename... Args>
 void writeRowToCSV(const std::string& fileName, Args... args) {
     //Using the filesystem library to use the exists function to see if there is already existing data.
@@ -137,21 +141,67 @@ void writeRowToCSV(const std::string& fileName, Args... args) {
     
     if (myFile.is_open()) {
        
-        int count = 0;
+        size_t count = 0;
         ((myFile << args << (++count < sizeof...(args) ? "," : "")), ...);
         myFile << ",";
+
         myFile.close();
     } else {
         std::cerr << "Unable to open file: " << fileName << std::endl;
     }
 }
 
+template <typename... Args>
+void writeToEndCSV(const std::string& fileName, Args... args) {
+    //Using the filesystem library to use the exists function to see if there is already existing data.
+    bool isNewFile = !std::filesystem::exists(fileName) || std::filesystem::file_size(fileName) == 0;
+
+    std::ofstream myFile(fileName, std::ios::app);
+    
+    if (myFile.is_open()) {
+       
+        size_t count = 0;
+        ((myFile << args << (++count < sizeof...(args) ? "," : "")), ...);
+        myFile << std::endl;
+        
+        myFile.close();
+    } else {
+        std::cerr << "Unable to open file: " << fileName << std::endl;
+    }
+}
+
+
+
+
 // FINAL FRONT DESK FUNCTION ABOVE. TESTED AND WORKING.
 
+bool checkLogin(std::string inputUser, std::string inputPass) {
+    std::ifstream file("users.csv");
+    std::string line, csvUser, csvPass;
+
+    if (file.is_open()) {
+        // Read each line from the CSV
+        while (std::getline(file, line)) {
+            std::stringstream ss(line);
+            
+            // Extract the username (first column) and password (second column)
+            if (std::getline(ss, csvUser, ',') && std::getline(ss, csvPass, ',')) {
+                // Check if the current row matches the input
+                if (csvUser == inputUser && csvPass == inputPass) {
+                    file.close();
+                    return true;
+                }
+            }
+        }
+        file.close();
+    }
+    return false;
+}
+// MAYBE RUNNING INTO FRONT DESK
 
 //DELETE CUSTOMER OR ENTRY (FRONT DESK)
 
-void deleteRowByID(std::string filename, std::string targetID) {
+inline void deleteRowByID(std::string filename, std::string targetID) {
     std::ifstream fileIn(filename);
     std::ofstream fileOut("temp.csv");
     std::string line;
