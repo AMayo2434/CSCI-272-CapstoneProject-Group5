@@ -14,10 +14,8 @@
 #include <vector>
 
 
-//Variables for functions.
-std::ifstream myFile;
-std::string line;
-int location = 0;
+//Variables for functions. To be moved to the appropriate classes after testing.
+
 
 
 // Fuction to manually center setfill and choose a character
@@ -53,46 +51,29 @@ inline void clearError() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard invalid input
 }
 
+//All of the above are functional. 
 // Going to use a template to calculate totals in Billing. To be moved.
 
 
-
 //This will be added to front desk class. All employees will have access to this function to view the CSV file. To be moved after tests
-
 inline void viewCSVFile(std::string fileName) {
     std::ifstream myFile(fileName);
-    std::getline(myFile, line);
-    std::getline(myFile, line);
     
-    location = line.find(',');
-
-    std::string v1 = line.substr(0, location); 
-    line = line.substr(location + 1, line.length());
-    
-    
-
     if (myFile.is_open()) {
         std::string line;
+        // This loop reads the file line by line from the beginning
         while (std::getline(myFile, line)) {
             std::cout << line << std::endl;
         }
         myFile.close();
     } else {
-        std::cout << "Unable to open file: " << fileName << std::endl;
+        std::cerr << "Unable to open file: " << fileName << std::endl;
     }
-
 }
 
+// WORKING
 
-// Function 1 writes the first part of the row
-void recordRemaining(std::ostream& file, std::string name, int age) {
-    file << name << "," << age; // No newline here
-}
 
-// Function 2 writes the remaining part of the same row
-void recordRemaining(std::ostream& file, int score1, int score2) {
-    file << "," << score1 << "," << score2; // Start with a comma to separate from previous data
-}
 
 //Template to save a single value to a CSV file. Use of a template requirement implemented. Going to try to get this to work
 

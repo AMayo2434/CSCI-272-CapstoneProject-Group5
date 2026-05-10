@@ -50,9 +50,8 @@ class Guest {
             //Adds customer ID to all relevant CSV files to track the guest's 
             //Once an ID is created, the customer must create an account. 
             //Customer IDs with no corresponding account information will be deleted from the CSV file after a certain amount of time. 
+            
 
-            saveToCSV("GuestInformation.csv", customerID); 
-            saveToCSV("Verification.csv", customerID);  // P-Wrd will be saved to this file.
 
             //Resets random number assignment for next use. Customer ID will be saved to CSV file.
             randomNum = 0; 
