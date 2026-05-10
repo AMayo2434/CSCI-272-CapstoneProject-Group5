@@ -1,14 +1,8 @@
+#include "LandingPage.h"
 
-#include "mainPage.h"
+int main() {
 
-
-int main () {
-
-    MainPage mainPage;
-    mainPage.beginProgram();
-
-
-  
-
+    LandingPage landingPage;
+    landingPage.beginProgram();
     return 0;
 }
