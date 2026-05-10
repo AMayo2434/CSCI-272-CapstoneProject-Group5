@@ -3,6 +3,7 @@
 
 #include "functions.h"
 #include "Guest.h"
+#include "Booking.h"
 
 
 
@@ -14,6 +15,7 @@ class LandingPage {
     int guestOption;
     int employeeOption;
     Guest currentGuest;
+    Booking portalSystem;
     
     //Default constructor for the landing page class.
     LandingPage() {
@@ -51,9 +53,8 @@ class LandingPage {
                         currentGuest.createAccount();
                 }
                 else if (guestOption == 2) {
-                    //Add the sign in function. Ensure the user details are verified with the CSV file w/ unordered map.
-                        currentGuest.signIn();
-                        
+                    //Add the sign in function. Ensure the user details are verified with the CSV file. 
+                        currentGuest.signIn(portalSystem);
                 }
                 else if (guestOption == 3) {
                     //Add the enter booking ID function which references the booking ID in the CSV file. Brings up user information.

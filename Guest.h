@@ -10,21 +10,26 @@
 #include <sstream>
 #include <limits>
 #include <random>
+//Adding in a friend function from the booking class to link these files.
+class Booking;
 // All functions available to the guest/user class when they initially create an account.
+
 class Guest {
 
     private:
         long long int customerID; //Remains private as this information references all data for the guest.
         std::string accountCreationDate;
+        friend class Booking;
 
     protected:
         std::string registrantName;
         std::string emailAddress;
-        long long int phoneNumber;
+        std::string phoneNumber;
         std::string countryOrRegion;
         int zipCode;
         std::string ZIP;
         std::string passWord;
+        std::string finalId;
 
     public:
 
@@ -33,10 +38,11 @@ class Guest {
             customerID = 0;
             registrantName = "";
             emailAddress = "";
-            phoneNumber = 0;
+            phoneNumber = "";
             countryOrRegion = "";
             zipCode = 0;
             passWord = "";
+            finalId = "";
         
         }
 
@@ -55,7 +61,8 @@ class Guest {
             long long randomNum = dis(gen);
 
             std::string convert = std::to_string(randomNum);
-
+            std::string finalId = convert;
+            
 //Checks to see if there is a duplicate value.
               if (isDuplicate("GuestInformation.csv", convert)) {
                     std::cout << "ID exists. Re-running ID creation." << std::endl;
@@ -64,6 +71,10 @@ class Guest {
                 else {
                     std::cout << "Your customer ID is: " << convert << std::endl;
                 }
+
+                
+                std::to_string(customerID) = convert;
+
 
 // ADD CSV SAVE FUNCTION BELOW.
 //Adds customer ID to all relevant CSV files to track the guest's 
@@ -139,101 +150,80 @@ std::cout << "Please enter your 5-digit zip code: ";
         
         }
 
-    bool signIn() {
+    void signIn(Booking &portalSystem) {
         std::string enterCustomerID, enterPassWord;
         std::string csvCustomerID, csvPass;
         bool loggedIn = false;
 
-        std::setw(30);
         centerText(" Sign In To Access All Guest Services Associated With Your Account", 100, ('='));
 
-        std::cout << "Please enter your CustomerID to get started: ";
-        std::cin >> enterCustomerID;
-        std::cout << std::endl;
-
-        std::cout << "Please enter your password: ";
-        std::cin >> enterPassWord;
-        std::cout << std::endl;
+            std::cout << "\t = = = Please enter your CustomerID to get started = = = " << std::endl;
+            std::cin >> enterCustomerID;
+            std::cout << "Please enter your password: ";
+            std::cin >> enterPassWord;
 
         std::ifstream file("VerificationInfo.csv");
         if(!file.is_open()) {
             std::cout << "Error. Unable to open file." << std::endl;
-            return false;
+            return; // Exit function if file missing
         }
 
         std::string loginline;
-        while(std::getline(file,loginline)) {
-            //Skips empty lines
+        // 1. Read line-by-line
+        while(std::getline(file, loginline)) {
             if(loginline.empty()) continue;
+
             std::stringstream ss(loginline);
-            std::string temp;
+            
+           //Use arguments for all available values.
+            if(std::getline(ss, csvCustomerID, ',') && std::getline(ss, csvPass)) {
+                
+                // 3. Trim possible \r from Windows-style CSVs
+                if (!csvPass.empty() && csvPass.back() == '\r') csvPass.pop_back();
 
-            std::getline(ss, csvCustomerID, ',');
-            std::getline(ss, csvPass, ',');
-
-            if (csvCustomerID == enterCustomerID && csvPass == enterPassWord){
-                this->customerID = std::stoll(csvCustomerID); //Converts strin into a signed long long int.
-                this->passWord = csvPass;
-                file.close();
-                return true;
+                if (csvCustomerID == enterCustomerID && csvPass == enterPassWord){
+                    this->customerID = std::stoll(csvCustomerID); 
+                    this->passWord = csvPass;
+                    loggedIn = true;
+                    break; // Exit loop, found user
+                }
             }
         }
-    
+        file.close();
 
         if(loggedIn) {
-
-           std::cout << "Sign in successful! Proceeding to portal.";
-           return true;
+            std::cout << "Sign in successful! Proceeding to portal." << std::endl;
+            //Calls portal from the Booking class
+            portalSystem.guestPortal(*this);
+        } else {
+            std::cout << "Invalid CustomerID or password." << std::endl;
+            // Do NOT call signIn() here. Let the main flow handle retries.
         }
-
-        else {
-            std::cout << "Invalid email or password. Please try again." << std:: endl;
-            return false;
-        }
-     
-
-    }
-
-    void mainMenu() {
-        int failedLoginChoice = 0;
-
-        if (signIn()) {
-            
-        }
-        else {
-            std::cout << "Would you like to: " << std:: endl;
-            std::cout << "\t1. Sign In" << std::endl;
-            std::cout << "\t2.Exit" << std::endl;
-
-            if (failedLoginChoice == 1) {
-                signIn();
-            }
-            else {
-                exit(0);
-            }
-        }
-    }
-
-    void guestPortal() {
-    std::cout << "\n--- GUEST PORTAL ---" << std::endl;
-    std::cout << "Account ID: " << this->customerID << std::endl;
-    // Add logic here to fetch and display other guest services
-
-
-
-
-
 }
 
-      
 
+//Getter Functions
 
-    
-               
+        std::string getCustomerID() const {
+            return finalId; }
 
-
-
-
+         std::string getregistrantName() const {
+            return registrantName; }
+         
+         std::string getemailAddress() const {
+             return emailAddress; }
+            
+         std::string getphoneNumber() const {
+             return phoneNumber; }
+             
+         std::string getcountryOrRegion() const {
+             return countryOrRegion;}
+             
+         int getzipCode() const {
+             return zipCode;}
+             
+         std::string getpassWord() const {
+             return passWord;}
 
 
     // Destructor to clear guest information from memory
@@ -245,7 +235,7 @@ std::cout << "Please enter your 5-digit zip code: ";
             customerID = 0;
             registrantName = "";
             emailAddress = "";
-            phoneNumber = 0;
+            phoneNumber = "";
             countryOrRegion = "";
             zipCode = 0;
             passWord = "";
