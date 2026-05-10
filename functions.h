@@ -79,7 +79,7 @@ inline void viewCSVFile(std::string fileName) {
 //WORKING DO NOT TOUCH
 //Allows the user to overwrite files. 
 //Refefenced from online and stack overflow.
-void updateCSV(std::string filename, std::string id, int column, std::string updatedVal) {
+inline void updateCSV(std::string filename, std::string id, int column, std::string updatedVal) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error. Could not open file: " << filename << std::endl;
@@ -139,15 +139,53 @@ void writeRowToCSV(const std::string& fileName, Args... args) {
        
         int count = 0;
         ((myFile << args << (++count < sizeof...(args) ? "," : "")), ...);
-        myFile << "";
+        myFile << ",";
         myFile.close();
     } else {
         std::cerr << "Unable to open file: " << fileName << std::endl;
     }
 }
 
-
 // FINAL FRONT DESK FUNCTION ABOVE. TESTED AND WORKING.
+
+
+//DELETE CUSTOMER OR ENTRY (FRONT DESK)
+
+void deleteRowByID(std::string filename, std::string targetID) {
+    std::ifstream fileIn(filename);
+    std::ofstream fileOut("temp.csv");
+    std::string line;
+    bool found = false;
+
+    if (!fileIn.is_open()) {
+        std::cerr << "Error: Could not open file." << std::endl;
+        return;
+    }
+
+    while (std::getline(fileIn, line)) {
+        std::stringstream ss(line);
+        std::string currentID;
+        
+        // Assumes ID is in the first column
+        std::getline(ss, currentID, ',');
+
+        if (currentID != targetID) {
+            fileOut << line << "\n";
+        } else {
+            found = true;
+        }
+    }
+
+    fileIn.close();
+    fileOut.close();
+
+    // Replace original file with temporary file
+    std::remove(filename.c_str());
+    std::rename("temp.csv", filename.c_str());
+
+    if (found) std::cout << "Record deleted successfully.\n";
+    else std::cout << "ID not found.\n";
+}
 
 
 
@@ -178,11 +216,11 @@ bool isDuplicate(const std::string& filename, const std::string& newID) {
 
 
 // Using this to convert values to string for the CSV file.
-void convertToStringL(long long int num, std::string& str) {
+inline void convertToStringL(long long int num, std::string& str) {
     str = std::to_string(num);
 }
 
-void convertToStringI(int num, std::string& str) {
+inline void convertToStringI(int num, std::string& str) {
     str = std::to_string(num);
 }
 

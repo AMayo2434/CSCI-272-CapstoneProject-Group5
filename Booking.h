@@ -6,10 +6,11 @@
 
 class Booking {
 
-
-
     public: 
 
+    Booking () {}
+
+    
 
 
 

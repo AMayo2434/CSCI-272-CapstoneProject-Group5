@@ -36,7 +36,8 @@ class Guest {
         
         }
 
-// COMPLETE (Going to have to find a way to check against an existing customer ID)
+// COMPLETE 
+//Verifies if anther exists.
         void generateCustomerID() {
             // Code to generate a unique customer ID
             srand(time(0)); //Creating a seed for the random number generator using the current time
@@ -67,7 +68,6 @@ class Guest {
             convert.clear();
             //Resets random number assignment for next use. Customer ID will be saved to CSV file.
             randomNum = 0; 
-        
         }
 
 
@@ -76,48 +76,51 @@ class Guest {
         void createAccount() {
 
             std::cout << "We are excited to have you join our community. Please follow the prompts to create your account." << std::endl;
-
-
-
-            std::cout << "Please enter your name: " << std::endl;
-            std::getline (std::cin, registrantName);
+            std::cout << "We are excited to have you join our community." << std::endl;
             
-            // Save to CSV function.
+            std::cout << "Please enter your name: ";
+            std::getline (std::cin, registrantName);
 
             //Makke sure input follows email conventions
             //Need to add in email conventions
             std::cout << "Please enter your email address: " << std::endl;
             std::getline (std::cin, emailAddress);
-            
-
 
             //Singular input, no spaces. Must be 10 digits long.
             std::cout << "Please enter your phone 10-digit phone number: " << std::endl;
-            std::cin >> phoneNumber >> std::fixed >> std::setprecision(10);
-
-
-
+            std::cin >> phoneNumber;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // FIX: Clear buffer
+  
             //Registers the user's country or region. 
             std::cout << "Please enter your country or region: " << std::endl;
             std::getline (std::cin, countryOrRegion);
 
-
-
             //Ensure this only allows for 5-digit zip codes. Singular input, no spaces.
-            std::cout << "Please enter your zip code. Only the first 5 digits of your entry will be recorded: " << std::endl;
-            std::cin >> zipCode >> std::fixed >> std::setprecision(5);
 
+            std::cout << "Please enter your zip code: " << std::endl;
+            std::cin >> zipCode;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // FIX: Clear buffer
 
-            
-            //Registers user password. Needs to be stored in an encrypted file.
-            std::cout << "Please create a password for your account. It cannot include spaces and it must be at least 12 characters long: " << std::endl;
-            std::cin >> passWord;
+            std::cout << "Please create a password (at least 12 characters): " << std::endl;
+            std::getline(std::cin, passWord); // Use getline for safety
+
             while (passWord.length() < 12) {
-                std::cout << "Your password must be at least 12 characters long. Please try again: " << std::endl;
-                clearError();
-                std::cin >> passWord;
-
+                std::cout << "Too short. Try again: " << std::endl;
+                std::getline(std::cin, passWord);
             }
+
+                    //Registers user password. Needs to be stored in an encrypted file.
+                    std::cout << "Please create a password for your account. It cannot include spaces and it must be at least 12 characters long: " << std::endl;
+                    std::cin >> passWord;
+                    while (passWord.length() < 12) {
+                        std::cout << "Your password must be at least 12 characters long. Please try again: " << std::endl;
+                        clearError();
+                        std::cin >> passWord;
+
+                    }
+
+            writeRowToCSV("GuestInformation.csv", registrantName, emailAddress, phoneNumber, countryOrRegion, zipCode);
+            writeRowToCSV("Verification.csv", passWord);
 
         }
 
@@ -125,7 +128,7 @@ class Guest {
             // Code to display account information
         }
         
-
+//Not sure if this is needed anymore, will review
         void parseGuestInfo(const std::string& fileName, std::map<std::string, std::vector<int>>& guestInfo) {
             std::cout << fileName << std::endl;
             std::ifstream myFile(fileName);
@@ -152,19 +155,6 @@ class Guest {
                 std::cout << "Unable to open file: " << fileName << std::endl;
             }
             // Code to read guest information from a file and populate the class attributes
-        }
-
-/*
-What was I doing here lmao? Come back if needed IG?
-for (const auto&[key, value] : guestInfo) {
-    std::cout << "Name: " << key << std::endl;
-
-    */
-
-
-        void saveGuestInformation(std::string fileName) {
-            // Code to save guest information to a file
-            std::map<std::string, std::vector<std::string>> guestInfo; // Map to store guest information 
         }
 
 

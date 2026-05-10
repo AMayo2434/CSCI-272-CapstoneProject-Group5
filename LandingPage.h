@@ -4,6 +4,8 @@
 #include "functions.h"
 #include "Guest.h"
 
+
+
 class LandingPage {
 
     public:
@@ -11,8 +13,8 @@ class LandingPage {
     char choice;
     int guestOption;
     int employeeOption;
-
-
+    Guest currentGuest;
+    
     //Default constructor for the landing page class.
     LandingPage() {
         choice = ' ';
@@ -45,8 +47,8 @@ class LandingPage {
                 if (guestOption == 1) {
                     //Add the create an account function. Ensure the user details save to a CSV file.
                     //Redirect to the sign in option after the acocunt is created.
-                    void generateCustomerID();
-                    void createAccount();
+                        currentGuest.generateCustomerID();
+                        currentGuest.createAccount();
                 }
                 else if (guestOption == 2) {
                     //Add the sign in function. Ensure the user details are verified with the CSV file w/ unordered map.
@@ -77,6 +79,7 @@ class LandingPage {
                 << std::endl;
                 std::cout << "\t1. View Guest Information" << std::endl;
                 std::cout << "\t2. View Bookings" << std::endl;
+            
 
 
 
