@@ -36,27 +36,40 @@ class Guest {
         
         }
 
-// COMPLETE
+// COMPLETE (Going to have to find a way to check against an existing customer ID)
         void generateCustomerID() {
             // Code to generate a unique customer ID
             srand(time(0)); //Creating a seed for the random number generator using the current time
             long long int randomNum =((long long int)rand() << 32) | rand(); //Generates a random number by combining two calls to rand()
             std::cout << std::fixed << std::setprecision(10);
-            std::cout << "Your customer ID is: " << randomNum << std::endl;
-            
+
+            std::string convert;
             customerID = randomNum;
 
-            // ADD CSV SAVE FUNCTION HERE.
+            convertToStringL(customerID, convert);
+
+            //Checks to see if there is a duplicate value.
+              if (isDuplicate("GuestInformation.csv", convert)) {
+                    std::cout << "ID exists." << std::endl;
+                } 
+                else {
+                    std::cout << "Your customer ID is: " << convert << std::endl;
+                }
+
+            // ADD CSV SAVE FUNCTION BELOW.
             //Adds customer ID to all relevant CSV files to track the guest's 
             //Once an ID is created, the customer must create an account. 
             //Customer IDs with no corresponding account information will be deleted from the CSV file after a certain amount of time. 
-            
 
+                writeRowToCSV("GuestInformation.csv", convert);
+                writeRowToCSV("VerificationInfo.csv", convert); // Adding user P to file
 
+            convert.clear();
             //Resets random number assignment for next use. Customer ID will be saved to CSV file.
             randomNum = 0; 
         
         }
+
 
 
 

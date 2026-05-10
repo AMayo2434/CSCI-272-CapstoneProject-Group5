@@ -13,6 +13,7 @@
 #include <sstream>
 #include <vector>
 #include <cstdio>
+#include <filesystem>
 
 //Variables for functions. To be moved to the appropriate classes after testing.
 
@@ -125,33 +126,55 @@ void updateCSV(std::string filename, std::string id, int column, std::string upd
 }
 
 
-//Template to save a single value to a CSV file. Use of a template requirement implemented. Going to try to get this to work
-//Type traits are used to make decisions based on the data type passed into the variable.
-//Sometimes the code may perform differently based on different data types. 
-template<typename T>
-void saveToCSV(const std::string& fileName, const T& value) {
-  
-    std::ifstream checkFile(fileName);
-    
-    // Using type traits to avoid errors in code. This type checks to see if the CSV file is empty.
-    bool isEmpty = (checkFile.peek() == std::ifstream::traits_type::eof());
-    checkFile.close();
+//USing a template to store a single or multiple arguments. 
+//Using the filesystem library to use the exists function to see if there is already existing data.
+template <typename... Args>
+void writeRowToCSV(const std::string& fileName, Args... args) {
+    //Using the filesystem library to use the exists function to see if there is already existing data.
+    bool isNewFile = !std::filesystem::exists(fileName) || std::filesystem::file_size(fileName) == 0;
 
-    // Uses the basic
     std::ofstream myFile(fileName, std::ios::app);
+    
     if (myFile.is_open()) {
-        if (isEmpty) {
-            //Creating an error message to notify the employee of a need for a manual reset.
-            myFile << "Headers missing from file. Please manually edit and re-run save program.";
-        }
-        myFile << value << ",";
+       
+        int count = 0;
+        ((myFile << args << (++count < sizeof...(args) ? "," : "")), ...);
+        myFile << "";
         myFile.close();
     } else {
         std::cerr << "Unable to open file: " << fileName << std::endl;
     }
 }
 
+
 // FINAL FRONT DESK FUNCTION ABOVE. TESTED AND WORKING.
+
+
+
+//Checks for duplicate IDs.
+bool isDuplicate(const std::string& filename, const std::string& newID) {
+    std::ifstream file(filename);
+    std::string line;
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening file!" << std::endl;
+        return false;
+    }
+
+    // Read file line by line
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string existingID;
+
+        // Assuming ID is the first column
+        std::getline(ss, existingID, ',');
+
+        if (existingID == newID) {
+            return true; // Duplicate found
+        }
+    }
+    return false; // No duplicate
+}
 
 
 // Using this to convert values to string for the CSV file.
