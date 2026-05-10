@@ -8,6 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <limits>
 
 class Guest {
 
@@ -21,6 +22,7 @@ class Guest {
         long long int phoneNumber;
         std::string countryOrRegion;
         int zipCode;
+        std::string ZIP;
         std::string passWord;
 
     public:
@@ -75,49 +77,57 @@ class Guest {
 
         void createAccount() {
 
-            std::cout << "We are excited to have you join our community. Please follow the prompts to create your account." << std::endl;
-            std::cout << "We are excited to have you join our community." << std::endl;
-            
+            std::cout << std:: setw(10) << "We are excited to have you join our community. Please follow the prompts to create your account." << std::endl;
+
             std::cout << "Please enter your name: ";
-            std::getline (std::cin, registrantName);
-
-            //Makke sure input follows email conventions
-            //Need to add in email conventions
+            std::getline(std::cin >> std::ws, registrantName);
+//Make sure input follows email conventions
+//Need to add in email conventions
             std::cout << "Please enter your email address: " << std::endl;
-            std::getline (std::cin, emailAddress);
+            std::getline(std::cin, emailAddress);
 
-            //Singular input, no spaces. Must be 10 digits long.
-            std::cout << "Please enter your phone 10-digit phone number: " << std::endl;
+// Phone Number
+//Singular input, no spaces. Must be 10 digits long.
+
+            std::cout << "Please enter your 10-digit phone number: " << std::endl;
             std::cin >> phoneNumber;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // FIX: Clear buffer
-  
-            //Registers the user's country or region. 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+
+// Country
+// Registers country or region
             std::cout << "Please enter your country or region: " << std::endl;
-            std::getline (std::cin, countryOrRegion);
+            std::getline(std::cin, countryOrRegion);
 
-            //Ensure this only allows for 5-digit zip codes. Singular input, no spaces.
-
-            std::cout << "Please enter your zip code: " << std::endl;
+// Zip Code Validation (Must be 5 digits)
+std::cout << "Please enter your 5-digit zip code: " << std::endl;
             std::cin >> zipCode;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // FIX: Clear buffer
-
-            std::cout << "Please create a password (at least 12 characters): " << std::endl;
-            std::getline(std::cin, passWord); // Use getline for safety
-
-            while (passWord.length() < 12) {
-                std::cout << "Too short. Try again: " << std::endl;
-                std::getline(std::cin, passWord);
+            convertToStringI(zipCode, ZIP);
+            
+            while (ZIP.length() != 5) {
+                std::cout << "Invalid zip code. Please enter exactly 5 digits: ";
+                std::cin >> zipCode;
+                convertToStringI(zipCode, ZIP);
             }
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-                    //Registers user password. Needs to be stored in an encrypted file.
-                    std::cout << "Please create a password for your account. It cannot include spaces and it must be at least 12 characters long: " << std::endl;
-                    std::cin >> passWord;
-                    while (passWord.length() < 12) {
-                        std::cout << "Your password must be at least 12 characters long. Please try again: " << std::endl;
-                        clearError();
-                        std::cin >> passWord;
+// Password Validation (Must be at least 12 chars)
+            
+            do {
+                std::cout << "Please create a password (no spaces, min 12 characters): ";
 
-                    }
+                if(!(std::getline(std::cin,passWord))) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    continue;
+                }
+
+                if (passWord.length() < 12) {
+                    std::cout << "Password too short. Please try again.";
+                }
+
+            } while (passWord.length() < 12);
+
+            std::cout << "Password accepted.";
 
             writeRowToCSV("GuestInformation.csv", registrantName, emailAddress, phoneNumber, countryOrRegion, zipCode);
             writeRowToCSV("Verification.csv", passWord);
@@ -176,5 +186,4 @@ class Guest {
 
 
     };
-
 #endif
