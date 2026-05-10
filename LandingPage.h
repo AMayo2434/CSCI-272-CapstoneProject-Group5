@@ -5,8 +5,6 @@
 #include "Guest.h"
 #include "Booking.h"
 
-
-
 class LandingPage {
 
     public:
@@ -55,7 +53,6 @@ class LandingPage {
                 else if (guestOption == 2) {
                     //Add the sign in function. Ensure the user details are verified with the CSV file. 
                         if(currentGuest.signIn()){
-                        
                             portalSystem.guestPortal(currentGuest);
                         }
                         else {
@@ -70,6 +67,15 @@ class LandingPage {
                     std::cout << "Please enter your BookingID: ";
                     
                     std::cout << "Thank you for entering your ID for [PLHDER]. Please proceed to the sign in page to make any adjustments to your stay.";
+                    
+                    currentGuest.signIn();
+                    if(currentGuest.signIn()){
+                            portalSystem.guestPortal(currentGuest);
+                        }
+                        else {
+                            std::cout << "Returning to main menu. Invalid login." << std::endl;
+                            beginProgram();
+                        }
 
                 }
         
