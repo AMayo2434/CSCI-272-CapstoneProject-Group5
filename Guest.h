@@ -163,6 +163,8 @@ std::cout << "Please enter your 5-digit zip code: ";
 
         std::string loginline;
         while(std::getline(file,loginline)) {
+            //Skips empty lines
+            if(loginline.empty()) continue;
             std::stringstream ss(loginline);
             std::string temp;
 
@@ -170,25 +172,63 @@ std::cout << "Please enter your 5-digit zip code: ";
             std::getline(ss, csvPass, ',');
 
             if (csvCustomerID == enterCustomerID && csvPass == enterPassWord){
-                loggedIn = true;
                 this->customerID = std::stoll(csvCustomerID); //Converts strin into a signed long long int.
                 this->passWord = csvPass;
-                break;
+                file.close();
+                return true;
             }
         }
-        file.close();
+    
 
         if(loggedIn) {
 
            std::cout << "Sign in successful! Proceeding to portal.";
+           return true;
         }
 
         else {
             std::cout << "Invalid email or password. Please try again." << std:: endl;
             return false;
         }
+     
 
     }
+
+    void mainMenu() {
+        int failedLoginChoice = 0;
+
+        if (signIn()) {
+            
+        }
+        else {
+            std::cout << "Would you like to: " << std:: endl;
+            std::cout << "\t1. Sign In" << std::endl;
+            std::cout << "\t2.Exit" << std::endl;
+
+            if (failedLoginChoice == 1) {
+                signIn();
+            }
+            else {
+                exit(0);
+            }
+        }
+    }
+
+    void guestPortal() {
+    std::cout << "\n--- GUEST PORTAL ---" << std::endl;
+    std::cout << "Account ID: " << this->customerID << std::endl;
+    // Add logic here to fetch and display other guest services
+
+
+
+
+
+}
+
+      
+
+
+    
                
 
 
