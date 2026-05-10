@@ -150,7 +150,7 @@ std::cout << "Please enter your 5-digit zip code: ";
         
         }
 
-    void signIn(Booking &portalSystem) {
+    bool signIn() {
         std::string enterCustomerID, enterPassWord;
         std::string csvCustomerID, csvPass;
         bool loggedIn = false;
@@ -165,7 +165,6 @@ std::cout << "Please enter your 5-digit zip code: ";
         std::ifstream file("VerificationInfo.csv");
         if(!file.is_open()) {
             std::cout << "Error. Unable to open file." << std::endl;
-            return; // Exit function if file missing
         }
 
         std::string loginline;
@@ -192,12 +191,14 @@ std::cout << "Please enter your 5-digit zip code: ";
         file.close();
 
         if(loggedIn) {
+            this->finalId = csvCustomerID;
+            this->registrantName = getregistrantName();
             std::cout << "Sign in successful! Proceeding to portal." << std::endl;
-            //Calls portal from the Booking class
-            portalSystem.guestPortal(*this);
+            return true;
+           
         } else {
             std::cout << "Invalid CustomerID or password." << std::endl;
-            // Do NOT call signIn() here. Let the main flow handle retries.
+            return false;
         }
 }
 
