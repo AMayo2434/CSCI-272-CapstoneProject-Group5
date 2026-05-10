@@ -1,3 +1,5 @@
+#define MAINPAGE_H
+#ifndef MAINPAGE_H
 
 #include "functions.h"
 
@@ -55,3 +57,4 @@ class MainPage {
 
 };
 
+#endif
