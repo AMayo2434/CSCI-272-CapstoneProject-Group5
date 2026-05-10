@@ -172,7 +172,6 @@ void writeToEndCSV(const std::string& fileName, Args... args) {
 
 
 
-
 // FINAL FRONT DESK FUNCTION ABOVE. TESTED AND WORKING.
 
 bool checkLogin(std::string inputUser, std::string inputPass) {

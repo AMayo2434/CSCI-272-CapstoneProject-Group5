@@ -1,0 +1,30 @@
+just in case
+
+//Not sure if this is needed anymore, will review
+        void parseGuestInfo(const std::string& fileName, std::map<std::string, std::vector<int>>& guestInfo) {
+            std::cout << fileName << std::endl;
+            std::ifstream myFile(fileName);
+            if(myFile.is_open()) {
+                std::string line;
+                while(std::getline(myFile, line)) {
+                    //cout << line << endl;
+                    std::stringstream ss(line);
+                    std::string key; // Placeholder val... I mean it works,
+                    getline(ss, key, ',');
+                    //cout << g << endl; // Get the first value as the key
+                    guestInfo.insert({key, std::vector<int>()}); // Insert the key with an empty vector as the value})
+
+                    std::string value;
+                    while(getline(ss, value, ',')) {
+                        guestInfo[key].push_back(std::stoi(value));
+                    }
+
+                    }
+                    myFile.close();
+                }
+            
+            else {
+                std::cout << "Unable to open file: " << fileName << std::endl;
+            }
+            // Code to read guest information from a file and populate the class attributes
+        }

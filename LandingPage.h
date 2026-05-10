@@ -52,11 +52,14 @@ class LandingPage {
                 }
                 else if (guestOption == 2) {
                     //Add the sign in function. Ensure the user details are verified with the CSV file w/ unordered map.
-
+                        currentGuest.signIn();
                 }
                 else if (guestOption == 3) {
                     //Add the enter booking ID function which references the booking ID in the CSV file. Brings up user information.
-
+                    //This only details the basic information of the booking and redirects the user to sign in.
+                    std::cout << "Please enter your BookingID: ";
+                    
+                    std::cout << "Thank you for entering your ID for [PLHDER]. Please proceed to the sign in page to make any adjustments to your stay.";
 
                 }
         
