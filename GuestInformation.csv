@@ -1,2 +1,2 @@
-Customer ID, Registrant Name, Email, Phone Number, Country/Region, ZIP, Booking Date, Check-in Date, Check-out Date, RoomID, Room Type
-1111111111, Apple Muted, applemuted@gmail.com, 3333333333, America, 11112, 
+CustomerID,RegistrantName,Email,PhoneNumber,Country/Region,ZIP,BookingDate,Check-inDate,Check-out Date,RoomType,RoomID
+1111111111,Apple Muted,applemuted@gmail.com,333-333-3333,America,11112,

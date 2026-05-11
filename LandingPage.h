@@ -99,9 +99,6 @@ class LandingPage {
                 std::cout << "\t1. View Guest Information" << std::endl;
                 std::cout << "\t2. View Bookings" << std::endl;
             
-
-
-
             }
 // Returns to the main menu if the input is invalid.
             else {

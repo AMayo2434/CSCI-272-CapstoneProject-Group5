@@ -14,6 +14,7 @@
 #include <vector>
 #include <cstdio>
 #include <filesystem>
+#include <ctime>
 
 //Variables for functions. To be moved to the appropriate classes after testing.
 
@@ -56,6 +57,38 @@ inline void clearError() {
 // Going to use a template to calculate totals in Billing. To be moved.
 
 // FRONT DESK FUNCTIONS
+
+inline void viewSingleRow(std::string fileName, std::string searchID ) {
+    std::ifstream myFile(fileName);
+    
+    if (myFile.is_open()) {
+        std::string line;
+        bool located = false;
+
+        // This loop reads the file line by line from the beginning
+        while (std::getline(myFile, line)) {
+            std::stringstream ss(line);
+            std::string currentCustID;
+
+        if(std::getline(ss, currentCustID, ',')){
+            if (currentCustID == searchID){ 
+                std:: cout << line << std::endl;
+                located = true;
+                break;
+            }
+        }
+        }
+
+        if (!located){
+            std::cout << "Unable to locate " << searchID << "in " << fileName << std::endl;
+        }
+        myFile.close();
+    } else {
+        std::cerr << "Unable to open file: " << fileName << std::endl;
+    }
+}
+
+
 //This will be added to front desk class. All employees will have access to this function to view the CSV file. To be moved after tests
 inline void viewCSVFile(std::string fileName) {
     std::ifstream myFile(fileName);
@@ -170,7 +203,25 @@ void writeToEndCSV(const std::string& fileName, Args... args) {
     }
 }
 
+//Determining if this remains a large scale function or if it gets downgraded to a class specific function
+inline std::string assignDate() {
+    std::time_t now = std::time(nullptr);
+    std::tm* localTime = std::localtime(&now);
+    //Full length of the date is 11 char
+    char buffer [11];
+    std::strftime(buffer,sizeof(buffer), "%m/%d/%Y", localTime);
+    return std::string(buffer);
+}
 
+inline std::string determineDate(int daysToAdd = 0) {
+    std::time_t now = std::time(nullptr);
+    std::tm* localTime = std::localtime(&now);
+    localTime->tm_mday += daysToAdd;
+    std::mktime(localTime); //mktime allows for month rollovers
+    char buffer[11];
+    std::strftime(buffer, sizeof(buffer), "%m/%d/%Y", localTime);
+    return;
+}
 
 // FINAL FRONT DESK FUNCTION ABOVE. TESTED AND WORKING.
 
@@ -236,13 +287,12 @@ inline void deleteRowByID(std::string filename, std::string targetID) {
     else std::cout << "ID not found.\n";
 }
 
-
-
 //Checks for duplicate IDs.
+//Arguments filename and the ID number.
 bool isDuplicate(const std::string& filename, const std::string& newID) {
     std::ifstream file(filename);
     std::string line;
-
+    //After accessing the file, determines if it can be opened. 
     if (!file.is_open()) {
         std::cerr << "Error opening file!" << std::endl;
         return false;
@@ -253,7 +303,7 @@ bool isDuplicate(const std::string& filename, const std::string& newID) {
         std::stringstream ss(line);
         std::string existingID;
 
-        // Assuming ID is the first column
+        // Assuming ID is the first column, checks every value in the first column
         std::getline(ss, existingID, ',');
 
         if (existingID == newID) {
@@ -265,10 +315,12 @@ bool isDuplicate(const std::string& filename, const std::string& newID) {
 
 
 // Using this to convert values to string for the CSV file.
+//Converts long long integers into strings.
 inline void convertToStringL(long long int num, std::string& str) {
     str = std::to_string(num);
 }
 
+//This converts integers to a string. 
 inline void convertToStringI(int num, std::string& str) {
     str = std::to_string(num);
 }

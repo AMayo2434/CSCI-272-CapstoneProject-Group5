@@ -58,11 +58,8 @@ The Room class uses virtual functions so the program can automatically
 use the correct function depending on the room type.
 
 Example :
-If the room is a DeluxeRoom, the DeluxeRoom version of calculateCost()
-will run automatically.
-
+If the room is a DeluxeRoom, the DeluxeRoom version of calculateCost() will run automatically.
 This is called runtime polymorphism.
-
 */
 
 // BASE CLASS : Room
@@ -124,7 +121,6 @@ public:
     int getRoomNumber() const;
     double getPricePerNight() const;
     bool getAvailability() const;
-    int getCapacity() const;
     string getCurrentGuest() const;
 
 
@@ -230,7 +226,6 @@ public:
 
     /*
         Overrides displayDetails()
-
         Displays details specific to a standard room.
     */
 
@@ -238,9 +233,7 @@ public:
 
 
     /*
-        Overrides calculateCost()
-
-        Standard rooms use the simplest pricing calculation.
+        Overrides calculateCost().Standard rooms use the simplest pricing calculation.
     */
 
     double calculateCost(int nights) const override;

@@ -168,7 +168,7 @@ std::cout << "Please enter your 5-digit zip code: ";
         }
 
         std::string loginline;
-        // 1. Read line-by-line
+        //Reads entire file
         while(std::getline(file, loginline)) {
             if(loginline.empty()) continue;
 
@@ -177,7 +177,7 @@ std::cout << "Please enter your 5-digit zip code: ";
            //Use arguments for all available values.
             if(std::getline(ss, csvCustomerID, ',') && std::getline(ss, csvPass)) {
                 
-                // 3. Trim possible \r from Windows-style CSVs
+                
                 if (!csvPass.empty() && csvPass.back() == '\r') csvPass.pop_back();
 
                 if (csvCustomerID == enterCustomerID && csvPass == enterPassWord){
@@ -225,22 +225,6 @@ std::cout << "Please enter your 5-digit zip code: ";
              
          std::string getpassWord() const {
              return passWord;}
-
-
-    // Destructor to clear guest information from memory
-        ~Guest() 
-        {
-            // Clears the guest information from memory when the object is destroyed
-            //Resets all values at the end of the program. There is no need to keep the information in variables
-            //because the information is stored in a file.
-            customerID = 0;
-            registrantName = "";
-            emailAddress = "";
-            phoneNumber = "";
-            countryOrRegion = "";
-            zipCode = 0;
-            passWord = "";
-        }
 
 
     };
