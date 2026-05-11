@@ -3,10 +3,9 @@
 int main() {
     //Creating a seed for the random number generator using the current time
     //Ran once in the beginning of the program
-    /* srand(time(0)); 
+    srand(time(0)); 
     LandingPage landingPage;
     landingPage.beginProgram();
-    return 0; */
+    return 0; 
 
-    viewSingleRow("Room.csv", "Deluxe Room");
 }

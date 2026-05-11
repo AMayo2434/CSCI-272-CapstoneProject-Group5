@@ -220,7 +220,7 @@ inline std::string determineDate(int daysToAdd = 0) {
     std::mktime(localTime); //mktime allows for month rollovers
     char buffer[11];
     std::strftime(buffer, sizeof(buffer), "%m/%d/%Y", localTime);
-    return;
+    return std::string(buffer);
 }
 
 // FINAL FRONT DESK FUNCTION ABOVE. TESTED AND WORKING.

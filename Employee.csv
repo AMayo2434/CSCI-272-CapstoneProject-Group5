@@ -1,5 +1,5 @@
-Employee, FirstName, LastName, Position, isAdmin
-03071,John, Doe, Manager, true
-20502,Jane, Smith, Cashier, false
-00003,Emily, Davis, Stock Associate, false
-00004,Michael, Brown, Customer Service Representative, false
+Employee, FirstName, LastName, Position
+03071,John, Doe, Manager
+20502,Jane, Smith, Cashier
+10203,Emily, Davis, Stock Associate
+24304,Michael, Brown, Customer Service Representative

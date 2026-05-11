@@ -192,7 +192,7 @@ std::cout << "Please enter your 5-digit zip code: ";
 
         if(loggedIn) {
             this->finalId = csvCustomerID;
-            this->registrantName = getregistrantName();
+            loadGuestInfo();  // Load all guest info from CSV
             std::cout << "Sign in successful! Proceeding to portal." << std::endl;
             return true;
            
@@ -201,6 +201,69 @@ std::cout << "Please enter your 5-digit zip code: ";
             return false;
         }
 }
+
+        // Load guest information from GuestInformation.csv based on customer ID
+        void loadGuestInfo() {
+            std::ifstream myFile("GuestInformation.csv");
+            
+            if (!myFile.is_open()) {
+                std::cerr << "Unable to open GuestInformation.csv" << std::endl;
+                return;
+            }
+            
+            std::string line;
+            bool headerSkipped = false;
+            
+            while (std::getline(myFile, line)) {
+                if (!headerSkipped) {
+                    headerSkipped = true;
+                    continue;  // Skip header line
+                }
+                
+                std::stringstream ss(line);
+                std::string custID, name, email, phone, country, zip;
+                
+                // Parse CSV: CustomerID,RegistrantName,Email,PhoneNumber,Country/Region,ZIP,...
+                if (std::getline(ss, custID, ',') &&
+                    std::getline(ss, name, ',') &&
+                    std::getline(ss, email, ',') &&
+                    std::getline(ss, phone, ',') &&
+                    std::getline(ss, country, ',') &&
+                    std::getline(ss, zip, ',')) {
+                    
+                    // Trim whitespace from custID
+                    custID.erase(0, custID.find_first_not_of(" \t"));
+                    custID.erase(custID.find_last_not_of(" \t") + 1);
+                    
+                    // Check if this is the logged-in customer
+                    if (custID == finalId) {
+                        // Trim whitespace from all fields
+                        name.erase(0, name.find_first_not_of(" \t"));
+                        name.erase(name.find_last_not_of(" \t") + 1);
+                        email.erase(0, email.find_first_not_of(" \t"));
+                        email.erase(email.find_last_not_of(" \t") + 1);
+                        phone.erase(0, phone.find_first_not_of(" \t"));
+                        phone.erase(phone.find_last_not_of(" \t") + 1);
+                        country.erase(0, country.find_first_not_of(" \t"));
+                        country.erase(country.find_last_not_of(" \t") + 1);
+                        zip.erase(0, zip.find_first_not_of(" \t"));
+                        zip.erase(zip.find_last_not_of(" \t") + 1);
+                        
+                        // Assign to member variables
+                        this->registrantName = name;
+                        this->emailAddress = email;
+                        this->phoneNumber = phone;
+                        this->countryOrRegion = country;
+                        this->zipCode = std::stoi(zip);
+                        
+                        myFile.close();
+                        return;
+                    }
+                }
+            }
+            
+            myFile.close();
+        }
 
 
 //Getter Functions
