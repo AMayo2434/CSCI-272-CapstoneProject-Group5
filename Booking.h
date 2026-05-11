@@ -175,28 +175,36 @@ class Booking {
             
             if (roomType == "Standard") {
                 if (isRoomAvailable("Standard")) {
-                    selectAvailableRoom("Standard");
-                    // Update CSV with booking info: CustomerID, RegistrantName, Email, PhoneNumber, Country/Region, ZIP, BookingDate, Check-inDate, Check-out Date, RoomType, RoomID
-                    updateGuestBooking(g, date, checkInDate, checkOutDate, roomType, roomID);
-                    cout << "Booking created successfully!" << endl;
+                    if (selectAvailableRoom("Standard", g.getCustomerID())) {
+                        updateGuestBooking(g, date, checkInDate, checkOutDate, roomType, roomID);
+                        cout << "Booking created successfully!" << endl;
+                    } else {
+                        cout << "Error assigning a Standard room." << endl;
+                    }
                 } else {
                     cout << "Sorry, no Standard rooms are available." << endl;
                 }
             }
             else if (roomType == "Deluxe") {
                 if (isRoomAvailable("Deluxe")) {
-                    selectAvailableRoom("Deluxe");
-                    updateGuestBooking(g, date, checkInDate, checkOutDate, roomType, roomID);
-                    cout << "Booking created successfully!" << endl;
+                    if (selectAvailableRoom("Deluxe", g.getCustomerID())) {
+                        updateGuestBooking(g, date, checkInDate, checkOutDate, roomType, roomID);
+                        cout << "Booking created successfully!" << endl;
+                    } else {
+                        cout << "Error assigning a Deluxe room." << endl;
+                    }
                 } else {
                     cout << "Sorry, no Deluxe rooms are available." << endl;
                 }
             }
             else if (roomType == "Presidential Suite") {
                 if (isRoomAvailable("Presidential Suite")) {
-                    selectAvailableRoom("Presidential Suite");
-                    updateGuestBooking(g, date, checkInDate, checkOutDate, roomType, roomID);
-                    cout << "Booking created successfully!" << endl;
+                    if (selectAvailableRoom("Presidential Suite", g.getCustomerID())) {
+                        updateGuestBooking(g, date, checkInDate, checkOutDate, roomType, roomID);
+                        cout << "Booking created successfully!" << endl;
+                    } else {
+                        cout << "Error assigning a Presidential Suite room." << endl;
+                    }
                 } else {
                     cout << "Sorry, no Presidential Suite rooms are available." << endl;
                 }
@@ -260,7 +268,7 @@ class Booking {
         }
 
         // Find and assign an available room of the specified type
-        void selectAvailableRoom(const string& roomType) {
+        bool selectAvailableRoom(const string& roomType, const string& customerID) {
             std::ifstream myFile("Rooms.csv");
             std::vector<std::string> lines;
             std::string line;
@@ -268,7 +276,7 @@ class Booking {
             
             if (!myFile.is_open()) {
                 std::cerr << "Unable to open Rooms.csv" << std::endl;
-                return;
+                return false;
             }
             
             int lineNum = 0;
@@ -292,7 +300,6 @@ class Booking {
                         
                         if (type == roomType && availability == "True" && !found) {
                             roomID = rID;
-                            // Mark this room as unavailable (for future CSV update)
                             found = true;
                             cout << "Room assigned: " << roomID << " (" << roomType << ")" << endl;
                         }
@@ -301,22 +308,105 @@ class Booking {
                 lineNum++;
             }
             myFile.close();
+            
+            if (found) {
+                updateRoomAssignment(roomID, customerID);
+            }
+            return found;
+        }
+
+        // Update the assigned room in Rooms.csv to unavailable and set the customer ID
+        void updateRoomAssignment(const string& assignedRoomID, const string& customerID) {
+            std::ifstream inFile("Rooms.csv");
+            if (!inFile.is_open()) {
+                std::cerr << "Unable to open Rooms.csv" << std::endl;
+                return;
+            }
+            
+            std::vector<std::string> lines;
+            std::string line;
+            while (std::getline(inFile, line)) {
+                lines.push_back(line);
+            }
+            inFile.close();
+            
+            if (lines.empty()) {
+                std::cerr << "Rooms.csv is empty or missing header." << std::endl;
+                return;
+            }
+            
+            std::ofstream tempFile("Rooms.csv.tmp");
+            if (!tempFile.is_open()) {
+                std::cerr << "Unable to open temporary Rooms.csv file" << std::endl;
+                return;
+            }
+            
+            // Write the header line exactly as read
+            tempFile << lines[0] << std::endl;
+            
+            for (size_t i = 1; i < lines.size(); ++i) {
+                std::stringstream ss(lines[i]);
+                std::string rID, type, availability, custID;
+                
+                if (std::getline(ss, rID, ',') &&
+                    std::getline(ss, type, ',') &&
+                    std::getline(ss, availability, ',') &&
+                    std::getline(ss, custID)) {
+                    
+                    rID.erase(0, rID.find_first_not_of(" \t"));
+                    rID.erase(rID.find_last_not_of(" \t") + 1);
+                    type.erase(0, type.find_first_not_of(" \t"));
+                    type.erase(type.find_last_not_of(" \t") + 1);
+                    availability.erase(0, availability.find_first_not_of(" \t"));
+                    availability.erase(availability.find_last_not_of(" \t") + 1);
+                    custID.erase(0, custID.find_first_not_of(" \t"));
+                    custID.erase(custID.find_last_not_of(" \t") + 1);
+                    
+                    if (rID == assignedRoomID) {
+                        tempFile << rID << ", " << type << ", False, " << customerID << std::endl;
+                    } else {
+                        tempFile << rID << ", " << type << ", " << availability << ", " << custID << std::endl;
+                    }
+                } else {
+                    tempFile << lines[i] << std::endl;
+                }
+            }
+            
+            tempFile.close();
+            
+            std::remove("Rooms.csv");
+            std::rename("Rooms.csv.tmp", "Rooms.csv");
         }
 
         // Helper function to update guest booking in GuestInformation.csv
         void updateGuestBooking(Guest &g, const string &bookingDate, const string &checkIn, const string &checkOut, const string &type, const string &room) {
             std::ifstream inFile("GuestInformation.csv");
-            std::ofstream outFile("GuestInformation.csv.tmp");
             std::string line;
+            std::vector<std::string> lines;
             bool updated = false;
             
-            if (!inFile.is_open() || !outFile.is_open()) {
+            if (!inFile.is_open()) {
                 std::cerr << "Error opening GuestInformation.csv" << std::endl;
                 return;
             }
             
             while (std::getline(inFile, line)) {
-                std::stringstream ss(line);
+                lines.push_back(line);
+            }
+            inFile.close();
+            
+            std::ofstream outFile("GuestInformation.csv.tmp");
+            if (!outFile.is_open()) {
+                std::cerr << "Error opening temporary file for GuestInformation.csv" << std::endl;
+                return;
+            }
+            
+            for (size_t i = 0; i < lines.size(); ++i) {
+                if (i == 0) {
+                    outFile << lines[i] << std::endl;
+                    continue;
+                }
+                std::stringstream ss(lines[i]);
                 std::string custID;
                 
                 if (std::getline(ss, custID, ',')) {
@@ -324,8 +414,6 @@ class Booking {
                     custID.erase(custID.find_last_not_of(" \t") + 1);
                     
                     if (custID == g.getCustomerID()) {
-                        // Update this row with booking info
-                        // Format: CustomerID,RegistrantName,Email,PhoneNumber,Country/Region,ZIP,BookingDate,Check-inDate,Check-out Date,RoomType,RoomID
                         outFile << g.getCustomerID() << ","
                                 << g.getregistrantName() << ","
                                 << g.getemailAddress() << ","
@@ -338,16 +426,28 @@ class Booking {
                                 << type << ","
                                 << room << std::endl;
                         updated = true;
-                    } else {
-                        outFile << line << std::endl;
+                        continue;
                     }
-                } else {
-                    outFile << line << std::endl;
                 }
+                outFile << lines[i] << std::endl;
             }
-            
-            inFile.close();
             outFile.close();
+            
+            if (!updated) {
+                // If there was no existing row for the guest, append a new row with booking info
+                writeToEndCSV("GuestInformation.csv.tmp",
+                               g.getCustomerID(),
+                               g.getregistrantName(),
+                               g.getemailAddress(),
+                               g.getphoneNumber(),
+                               g.getcountryOrRegion(),
+                               g.getzipCode(),
+                               bookingDate,
+                               checkIn,
+                               checkOut,
+                               type,
+                               room);
+            }
             
             // Replace original file with updated file
             std::remove("GuestInformation.csv");
