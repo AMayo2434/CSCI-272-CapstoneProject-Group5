@@ -24,7 +24,7 @@ RoomID, RoomType, Availability, Customer ID
 303, Standard, True, 0
 304, Standard, True, 0
 305, Standard, True, 0
-306, Deluxe, False, 3058315736
+306, Deluxe, True, 0
 307, Deluxe, True, 0
 308, Deluxe, True, 0
 309, Deluxe, True, 0
