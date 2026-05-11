@@ -147,6 +147,7 @@ std::cout << "Please enter your 5-digit zip code: ";
             writeToEndCSV("VerificationInfo.csv", passWord);
         
             std:: cout << "Account created successfully. Proceeding to Sign In page..." << std::endl;
+            signIn();
         
         }
 

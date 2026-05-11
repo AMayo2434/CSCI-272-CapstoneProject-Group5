@@ -11,6 +11,9 @@ class Employee {
 
     private:
         std::string employeeID;
+        std::string firstName;
+        std::string lastName;
+        std::string position;
         std::string passWord;
 
     public:
@@ -18,7 +21,20 @@ class Employee {
     //Constructor
         Employee() {
             employeeID = "";
+            firstName = "";
+            lastName = "";
+            position = "";
             passWord = "";
+        }
+
+    //Operator overloading to combine first and last names
+        std::string operator+(const Employee& other) const {
+            return firstName + " " + lastName;
+        }
+
+    //Alternative: create a function to get full name using operator overloading
+        std::string getFullName() const {
+            return firstName + " " + lastName;
         }
 
     //Sign in function - verifies employee ID and password from EmployeeV.csv
@@ -63,14 +79,18 @@ class Employee {
                         this->employeeID = csvEmployeeID;
                         this->passWord = csvPass;
                         loggedIn = true;
-                        break; // Exit loop, found user
+                        file.close();
+                        
+                        // Load employee details from Employee.csv
+                        loadEmployeeInfo();
+                        break;
                     }
                 }
             }
             file.close();
 
             if (loggedIn) {
-                std::cout << "Sign in successful! Proceeding to Front Desk Portal." << std::endl;
+                std::cout << "Sign in successful! Welcome, " << getFullName() << "!" << std::endl;
                 return true;
                 
             } else {
@@ -79,10 +99,77 @@ class Employee {
             }
         }
 
+    //Load employee information from Employee.csv
+        void loadEmployeeInfo() {
+            std::ifstream myFile("Employee.csv");
+            
+            if (!myFile.is_open()) {
+                std::cerr << "Unable to open Employee.csv" << std::endl;
+                return;
+            }
+            
+            std::string line;
+            bool headerSkipped = false;
+            
+            while (std::getline(myFile, line)) {
+                if (!headerSkipped) {
+                    headerSkipped = true;
+                    continue;  // Skip header line
+                }
+                
+                std::stringstream ss(line);
+                std::string empID, fName, lName, pos;
+                
+                // Parse CSV: EmployeeID, FirstName, LastName, Position
+                if (std::getline(ss, empID, ',') &&
+                    std::getline(ss, fName, ',') &&
+                    std::getline(ss, lName, ',') &&
+                    std::getline(ss, pos, ',')) {
+                    
+                    // Trim whitespace from empID
+                    empID.erase(0, empID.find_first_not_of(" \t"));
+                    empID.erase(empID.find_last_not_of(" \t") + 1);
+                    
+                    // Check if this is the logged-in employee
+                    if (empID == employeeID) {
+                        // Trim whitespace from all fields
+                        fName.erase(0, fName.find_first_not_of(" \t"));
+                        fName.erase(fName.find_last_not_of(" \t") + 1);
+                        lName.erase(0, lName.find_first_not_of(" \t"));
+                        lName.erase(lName.find_last_not_of(" \t") + 1);
+                        pos.erase(0, pos.find_first_not_of(" \t"));
+                        pos.erase(pos.find_last_not_of(" \t") + 1);
+                        
+                        // Assign to member variables
+                        this->firstName = fName;
+                        this->lastName = lName;
+                        this->position = pos;
+                        
+                        myFile.close();
+                        return;
+                    }
+                }
+            }
+            
+            myFile.close();
+        }
+
     //Getter Functions
 
         std::string getEmployeeID() const {
             return employeeID;
+        }
+
+        std::string getFirstName() const {
+            return firstName;
+        }
+
+        std::string getLastName() const {
+            return lastName;
+        }
+
+        std::string getPosition() const {
+            return position;
         }
 
         std::string getpassWord() const {

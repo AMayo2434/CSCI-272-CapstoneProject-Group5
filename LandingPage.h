@@ -53,6 +53,7 @@ class LandingPage {
                     //Redirect to the sign in option after the acocunt is created.
                         currentGuest.generateCustomerID();
                         currentGuest.createAccount();
+                        
                 }
                 else if (guestOption == 2) {
                     //Add the sign in function. Ensure the user details are verified with the CSV file. 
@@ -140,7 +141,8 @@ class LandingPage {
         
         centerText(" Front Desk Portal ", 80, '=');
         
-        std::cout << "Welcome to the Front Desk Portal, Employee " << currentEmployee.getEmployeeID() << "!" << std::endl;
+        std::cout << "Welcome to the Front Desk Portal, " << currentEmployee.getFullName() << " (ID: " << currentEmployee.getEmployeeID() << ")!" << std::endl;
+        std::cout << "Position: " << currentEmployee.getPosition() << std::endl;
         std::cout << "\nPlease select an option:" << std::endl;
         std::cout << "\t1. View Guest Information" << std::endl;
         std::cout << "\t2. View Bookings" << std::endl;
@@ -152,8 +154,12 @@ class LandingPage {
         
         switch(menuChoice) {
             case 1: {
-                std::cout << "Guest Information feature - To be implemented." << std::endl;
-                // Add guest information viewing functionality
+                centerText(" Guest Information ", 80, '-');
+                viewCSVFile("GuestInformation.csv");
+                std::cout << "\nPress Enter to return to menu...";
+                std::cin.ignore();
+                std::cin.get();
+                employeePortal();
                 break;
             }
             case 2: {
