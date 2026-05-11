@@ -4,6 +4,8 @@
 #include "functions.h"
 #include "Guest.h"
 #include "Booking.h"
+#include "Employee.h"
+#include "Frontdesk.h"
 
 class LandingPage {
 
@@ -13,7 +15,9 @@ class LandingPage {
     int guestOption;
     int employeeOption;
     Guest currentGuest;
+    Employee currentEmployee;
     Booking portalSystem;
+    FrontDesk frontDeskPortal;
     
     //Default constructor for the landing page class.
     LandingPage() {
@@ -94,11 +98,33 @@ class LandingPage {
 // Employee landing page begins in this else if block. FINISH GUEST LANDING PAGE FIRST.
             else if (choice == 'E' || choice == 'e') { // Employee Landing Page
 
-                std::cout << "Welcome Express Employee! This is the portal intended to help you assist our customers with all their needs.\n Please select an option to continue:" 
-                << std::endl;
-                std::cout << "\t1. View Guest Information" << std::endl;
-                std::cout << "\t2. View Bookings" << std::endl;
-            
+                std::cout << "\t1. Sign In" << std::endl;
+                std::cout << "\t2. Exit Program" << std::endl;
+                
+                std::cin >> employeeOption;
+
+                if (employeeOption == 1) {
+                    //Employee sign in function - verifies employee ID and password from EmployeeV.csv
+                    if (currentEmployee.signIn()) {
+                        //Upon successful login, grant access to Front Desk portal
+                        employeePortal();
+                    }
+                    else {
+                        std::cout << "Returning to main menu. Invalid login." << std::endl;
+                        beginProgram();
+                    }
+                }
+                else if (employeeOption == 2) {
+                    //Exits program.
+                    std::cout << "Thank you for visiting Express GP! We hope to see you again soon!" << std::endl;
+                    exit(0);
+                }
+// Returns to the main menu if the input is invalid.
+                else {
+                    std::cout << "Invalid input. Please try again." << std::endl;
+                    clearError();
+                    beginProgram();
+                }
             }
 // Returns to the main menu if the input is invalid.
             else {
@@ -108,6 +134,64 @@ class LandingPage {
             }                  
     }
 
+    //Employee portal function - provides access to Front Desk features upon successful login
+    void employeePortal() {
+        int menuChoice = 0;
+        
+        centerText(" Front Desk Portal ", 80, '=');
+        
+        std::cout << "Welcome to the Front Desk Portal, Employee " << currentEmployee.getEmployeeID() << "!" << std::endl;
+        std::cout << "\nPlease select an option:" << std::endl;
+        std::cout << "\t1. View Guest Information" << std::endl;
+        std::cout << "\t2. View Bookings" << std::endl;
+        std::cout << "\t3. Add Guest" << std::endl;
+        std::cout << "\t4. Remove Guest" << std::endl;
+        std::cout << "\t5. Sign Out" << std::endl;
+        
+        std::cin >> menuChoice;
+        
+        switch(menuChoice) {
+            case 1: {
+                std::cout << "Guest Information feature - To be implemented." << std::endl;
+                // Add guest information viewing functionality
+                break;
+            }
+            case 2: {
+                std::cout << "Bookings feature - To be implemented." << std::endl;
+                // Add booking viewing functionality
+                break;
+            }
+            case 3: {
+                std::cout << "Add Guest - Enter guest name: ";
+                std::string guestName;
+                std::cin.ignore();
+                std::getline(std::cin, guestName);
+                frontDeskPortal.addGuest(guestName);
+                employeePortal();
+                break;
+            }
+            case 4: {
+                std::cout << "Remove Guest - Enter guest name: ";
+                std::string removeGuest;
+                std::cin.ignore();
+                std::getline(std::cin, removeGuest);
+                frontDeskPortal.removeGuest(removeGuest);
+                employeePortal();
+                break;
+            }
+            case 5: {
+                std::cout << "Signing out. Returning to main menu." << std::endl;
+                beginProgram();
+                break;
+            }
+            default: {
+                std::cout << "Invalid input. Please try again." << std::endl;
+                clearError();
+                employeePortal();
+                break;
+            }
+        }
+    }
     
 };
 

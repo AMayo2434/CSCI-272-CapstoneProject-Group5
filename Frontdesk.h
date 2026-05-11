@@ -2,8 +2,12 @@
 #define FRONTDESK_H
 
 #include "Booking.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
 
-
+using namespace std;
 
 class FrontDesk {
     private:
