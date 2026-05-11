@@ -1,5 +1,5 @@
 RoomID, RoomType, Availability, Customer ID
-101, Standard, True, 0
+101, Standard, False, 3058315736
 102, Standard, True, 0
 103, Standard, True, 0
 104, Standard, True, 0
@@ -24,7 +24,7 @@ RoomID, RoomType, Availability, Customer ID
 303, Standard, True, 0
 304, Standard, True, 0
 305, Standard, True, 0
-306, Deluxe, True, 0
+306, Deluxe, False, 3058315736
 307, Deluxe, True, 0
 308, Deluxe, True, 0
 309, Deluxe, True, 0
@@ -42,7 +42,7 @@ RoomID, RoomType, Availability, Customer ID
 501, Presidential Suite, True, 0
 502, Presidential Suite, True, 0
 503, Presidential Suite, True, 0
-504, Presidential Suite,True, 0
+504, Presidential Suite, True, 0
 505, Presidential Suite, True, 0
 506, Presidential Suite, True, 0
 507, Presidential Suite, True, 0

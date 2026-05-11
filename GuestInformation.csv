@@ -1,3 +1,3 @@
 CustomerID,RegistrantName,Email,PhoneNumber,Country/Region,ZIP,BookingDate,Check-inDate,Check-out Date,RoomType,RoomID
 1111111111,Apple Muted,applemuted@gmail.com,333-333-3333,America,11112,05/10/2026,06/07/2026,05/16/2026,Deluxe,306
-3058315736,A M,Jester@gmail.com,333-323-4566,United States,28888,
+3058315736,A M,Jester@gmail.com,333-323-4566,United States,28888,05/10/2026,06/22/2026,05/13/2026,Standard,101

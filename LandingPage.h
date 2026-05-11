@@ -107,7 +107,9 @@ class LandingPage {
                 if (employeeOption == 1) {
                     //Employee sign in function - verifies employee ID and password from EmployeeV.csv
                     if (currentEmployee.signIn()) {
-                        //Upon successful login, grant access to Front Desk portal
+                        //Upon successful login, hand control to FrontDesk::runPortal().
+                        //runPortal() owns a while loop that keeps the employee in the portal
+                        //until they explicitly choose Sign Out (option 17).
                         employeePortal();
                     }
                     else {
@@ -135,68 +137,30 @@ class LandingPage {
             }                  
     }
 
-    //Employee portal function - provides access to Front Desk features upon successful login
+    // -------------------------------------------------------
+    // employeePortal()
+    //
+    // Called after a successful employee login.
+    // Delegates entirely to FrontDesk::runPortal() which owns
+    // a while loop — the employee stays in the portal until
+    // they select Sign Out (option 17).
+    //
+    // When runPortal() returns, control comes back here and
+    // then back to beginProgram() so the main menu reappears,
+    // allowing another employee to log in without restarting.
+    // -------------------------------------------------------
     void employeePortal() {
-        int menuChoice = 0;
-        
-        centerText(" Front Desk Portal ", 80, '=');
-        
-        std::cout << "Welcome to the Front Desk Portal, " << currentEmployee.getFullName() << " (ID: " << currentEmployee.getEmployeeID() << ")!" << std::endl;
-        std::cout << "Position: " << currentEmployee.getPosition() << std::endl;
-        std::cout << "\nPlease select an option:" << std::endl;
-        std::cout << "\t1. View Guest Information" << std::endl;
-        std::cout << "\t2. View Bookings" << std::endl;
-        std::cout << "\t3. Add Guest" << std::endl;
-        std::cout << "\t4. Remove Guest" << std::endl;
-        std::cout << "\t5. Sign Out" << std::endl;
-        
-        std::cin >> menuChoice;
-        
-        switch(menuChoice) {
-            case 1: {
-                centerText(" Guest Information ", 80, '-');
-                viewCSVFile("GuestInformation.csv");
-                std::cout << "\nPress Enter to return to menu...";
-                std::cin.ignore();
-                std::cin.get();
-                employeePortal();
-                break;
-            }
-            case 2: {
-                std::cout << "Bookings feature - To be implemented." << std::endl;
-                // Add booking viewing functionality
-                break;
-            }
-            case 3: {
-                std::cout << "Add Guest - Enter guest name: ";
-                std::string guestName;
-                std::cin.ignore();
-                std::getline(std::cin, guestName);
-                frontDeskPortal.addGuest(guestName);
-                employeePortal();
-                break;
-            }
-            case 4: {
-                std::cout << "Remove Guest - Enter guest name: ";
-                std::string removeGuest;
-                std::cin.ignore();
-                std::getline(std::cin, removeGuest);
-                frontDeskPortal.removeGuest(removeGuest);
-                employeePortal();
-                break;
-            }
-            case 5: {
-                std::cout << "Signing out. Returning to main menu." << std::endl;
-                beginProgram();
-                break;
-            }
-            default: {
-                std::cout << "Invalid input. Please try again." << std::endl;
-                clearError();
-                employeePortal();
-                break;
-            }
-        }
+        // Pass employee details so the portal header displays correctly.
+        // runPortal() loops internally — no recursion, no accidental exit.
+        frontDeskPortal.runPortal(
+            currentEmployee.getFullName(),
+            currentEmployee.getEmployeeID(),
+            currentEmployee.getPosition()
+        );
+
+        // Returned from runPortal() means the employee signed out.
+        // Return to the main landing page.
+        beginProgram();
     }
     
 };
