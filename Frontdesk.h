@@ -91,12 +91,7 @@ class FrontDesk {
         }
     }
 
-    // Access Billing
-    void accessBilling() {
-
-        cout << "Opening Billing System...\n";
-    }
-
+ 
     // Access Room Management
     void accessRoomManagement() {
 
